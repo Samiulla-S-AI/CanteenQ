@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="theme-color" content="#F56028" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="google-site-verification" content="EWYeJff-bYSangtR5v-FTHCahGTIXWfFvw7MJFrg-us" />
+  <title>CanteenQ - Campus Food Pre-ordering Application</title>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script>
+    window.deferredPWAInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      window.deferredPWAInstallPrompt = e;
+      // Trigger a custom event so React can pick it up immediately
+      window.dispatchEvent(new Event('pwa-prompt-ready'));
+    });
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>

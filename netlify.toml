@@ -1,0 +1,105 @@
+[build]
+  base = "."
+  command = "npm run build"
+  publish = "dist"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Redirect API calls to Netlify Functions
+[[redirects]]
+  from = "/api/create-razorpay-order"
+  to = "/.netlify/functions/create-razorpay-order"
+  status = 200
+
+[[redirects]]
+  from = "/api/verify-razorpay-payment"
+  to = "/.netlify/functions/verify-razorpay-payment"
+  status = 200
+
+[[redirects]]
+  from = "/api/commission-details/*"
+  to = "/.netlify/functions/commission-details/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/notifications/save-token"
+  to = "/.netlify/functions/save-token"
+  status = 200
+
+[[redirects]]
+  from = "/api/notifications/send"
+  to = "/.netlify/functions/send-notification"
+  status = 200
+
+[[redirects]]
+  from = "/api/notifications/notify-order-status"
+  to = "/.netlify/functions/notify-order-status"
+  status = 200
+
+# ── Supabase Reverse Proxy ──
+# Jio (and some other Indian ISPs) block direct connections to supabase.co.
+# By proxying through Netlify, the browser only talks to canteenq.netlify.app
+# and Netlify's edge servers forward to Supabase — bypassing the ISP block.
+
+# Proxy Supabase REST API
+[[redirects]]
+  from = "/supabase/rest/v1/*"
+  to = "https://hkdyivuauoxrmysowhvs.supabase.co/rest/v1/:splat"
+  status = 200
+  force = true
+
+# Proxy Supabase Auth
+[[redirects]]
+  from = "/supabase/auth/v1/*"
+  to = "https://hkdyivuauoxrmysowhvs.supabase.co/auth/v1/:splat"
+  status = 200
+  force = true
+
+# Proxy Supabase Storage
+[[redirects]]
+  from = "/supabase/storage/v1/*"
+  to = "https://hkdyivuauoxrmysowhvs.supabase.co/storage/v1/:splat"
+  status = 200
+  force = true
+
+# Proxy Supabase Realtime (WebSocket upgrade)
+[[redirects]]
+  from = "/supabase/realtime/v1/*"
+  to = "https://hkdyivuauoxrmysowhvs.supabase.co/realtime/v1/:splat"
+  status = 200
+  force = true
+
+# Catch-all redirect for SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build.environment]
+  NODE_VERSION = "22.19.0"
+
+# ── Cache Headers ──
+# Service worker must NEVER be cached by the CDN/browser
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+# Same for the workbox manifest
+[[headers]]
+  for = "/workbox-*.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+# index.html should be revalidated every time (SPA entry point)
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+# Hashed assets can be cached long-term (they change hash on rebuild)
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

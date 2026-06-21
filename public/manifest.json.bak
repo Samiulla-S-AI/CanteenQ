@@ -1,0 +1,21 @@
+{
+  "name": "CanteenQ",
+  "short_name": "CanteenQ",
+  "description": "Campus Food Pre-ordering Application",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FC8A14",
+  "theme_color": "#FC8A14",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ],
+  "serviceworker": {
+    "src": "/service-worker.js",
+    "scope": "/",
+    "use_cache": true
+  }
+}

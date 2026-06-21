@@ -1,0 +1,15 @@
+# local env files
+.env
+.env*.local
+.env.production
+config/canteenqnotification-b61e0-firebase-adminsdk-fbsvc-32189aaaa5.json
+
+# Local Netlify folder
+.netlify
+
+# Build and dependencies
+node_modules
+dist
+dev-dist
+__pycache__
+backup_history.db

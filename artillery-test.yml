@@ -1,0 +1,24 @@
+config:
+  # Replace this with your actual Netlify deployed URL, e.g., https://your-site-name.netlify.app
+  target: "https://your-site-name.netlify.app"
+  phases:
+    - duration: 30 # Test duration in seconds
+      arrivalRate: 5 # 5 new users per second
+      rampTo: 15 # Gradually increase to 15 users per second over the 30 seconds
+      name: "Warm up and load spike"
+
+scenarios:
+  - name: "Create Razorpay Order"
+    flow:
+      - post:
+          url: "/.netlify/functions/create-razorpay-order"
+          headers:
+            Content-Type: "application/json"
+          json:
+            amount: 50000 # This represents 500.00 INR
+            receipt: "receipt_load_test_{{ $randomNumber(1000, 9999) }}"
+            notes:
+              customerName: "Load Tester"
+          # Optional: Check if the response is successful
+          expect:
+            - statusCode: 200

@@ -1,0 +1,77 @@
+// Import Firebase scripts
+importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js');
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCV97bFUFLu9I2Mb0rCVpcalJg0F-nrZ9k",
+  authDomain: "canteenqnotification-b61e0.firebaseapp.com",
+  projectId: "canteenqnotification-b61e0",
+  storageBucket: "canteenqnotification-b61e0.firebasestorage.app",
+  messagingSenderId: "11504592565",
+  appId: "1:11504592565:web:1bda9c21f6790e981180fc",
+  measurementId: "G-84EZWKDWS1"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage((payload) => {
+  console.log('[firebase-messaging-sw.js] Received background message ', payload);
+  // Customize notification here
+  const notificationTitle = payload.notification.title;
+  const notificationOptions = {
+    body: payload.notification.body,
+    icon: '/logo/inwhite.png'
+  };
+
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+// Basic service worker for CanteenQ
+
+const CACHE_NAME = 'canteenq-cache-v1';
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/manifest.json'
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        return cache.addAll(urlsToCache);
+      })
+  );
+});
+
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        // Cache hit - return response
+        if (response) {
+          return response;
+        }
+        return fetch(event.request);
+      })
+  );
+});
+
+self.addEventListener('activate', event => {
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
